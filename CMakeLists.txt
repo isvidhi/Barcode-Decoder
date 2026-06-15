@@ -9,27 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia)
 qt_standard_project_setup(REQUIRES 6.8)
 
-# Executable
-qt_add_executable(appbarcodeDecoder
-    main.cpp
-)
-
-qt_add_qml_module(appbarcodeDecoder
-    URI barcodeDecoder
-    VERSION 1.0
-    QML_FILES
-        Main.qml
-    SOURCES
-        barcodedecoder.h barcodedecoder.cpp
-        videomanager.h videomanager.cpp
-        appcontroller.h appcontroller.cpp
-)
-
 # OpenCV setup
 set(OpenCV_DIR "C:/opencv/OpenCV-MinGW-Build-OpenCV-4.5.5-x64")
 # set(OpenCV_DIR "C:/opencv/OpenCV-MSVC-2022-Build-4.10.0/build/x64/vc16/lib")
 find_package(OpenCV REQUIRED)
-target_include_directories(appbarcodeDecoder PRIVATE ${OpenCV_INCLUDE_DIRS})
 
 # ZXing-Cpp setup
 # Use the install path from your "cmake --install"
@@ -39,6 +22,25 @@ list(APPEND CMAKE_PREFIX_PATH "C:/ZXing")
 find_package(ZXing REQUIRED)
 # REQUIRED HINTS "C:/zxing-cpp/install/lib/cmake/ZXing")
 
+# Executable
+qt_add_executable(appbarcodeDecoder
+    ${CMAKE_SOURCE_DIR}/src/main.cpp
+)
+
+qt_add_qml_module(appbarcodeDecoder
+    URI barcodeDecoder
+    VERSION 1.0
+    QML_FILES
+        src/Main.qml
+    SOURCES
+        ${CMAKE_SOURCE_DIR}/src/barcodedecoder.h
+        ${CMAKE_SOURCE_DIR}/src/barcodedecoder.cpp
+        ${CMAKE_SOURCE_DIR}/src/videomanager.h
+        ${CMAKE_SOURCE_DIR}/src/videomanager.cpp
+        ${CMAKE_SOURCE_DIR}/src/appcontroller.h
+        ${CMAKE_SOURCE_DIR}/src/appcontroller.cpp
+)
+
 # Properties
 set_target_properties(appbarcodeDecoder PROPERTIES
     MACOSX_BUNDLE TRUE
@@ -46,6 +48,8 @@ set_target_properties(appbarcodeDecoder PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
+
+target_include_directories(appbarcodeDecoder PRIVATE ${OpenCV_INCLUDE_DIRS})
 
 # Linking
 target_link_libraries(appbarcodeDecoder
